@@ -5,15 +5,9 @@ import { CreateUserDto } from "../dtos/CreateUser.dto";
 import {v4 as uuidv4} from 'uuid'
 
 
-const users:CreateUserDto[]=[]
+export const users:CreateUserDto[]=[]
 
-export function getUsers(req:Request,res:Response){
-    
-res.send([])
-}
-export function getUsersById(req:Request,res:Response){
-    res.send({})
-}
+
 
 export function createUser(req:Request<{},{},CreateUserDto>,res:Response){
   
@@ -25,4 +19,8 @@ res.status(201).json(newUser)
 
 
 
+}
+
+export function getAllUsers(req:Request,res:Response){
+    res.json(users)
 }

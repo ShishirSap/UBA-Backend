@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { createUser, getUsers, getUsersById } from "../controllers/users";
+import { createUser, getAllUsers } from "../controllers/users";
 import { validateRequest } from "../middlewares/validateRequest";
 const router=Router()
 
 
-router.get("/",getUsers)
+router.get("/",getAllUsers)
 
-router.get("/:id",getUsersById)
+router.get("/:id",getAllUsers)
 
 router.post("/signup",validateRequest(['name','email','password']),createUser)
 
