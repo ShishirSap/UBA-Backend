@@ -9,13 +9,8 @@ email:String!
 }
 
 type Query{
-listusers:[User!]!
+listusers:[User!]!,
+searchUsers(name:String,email:String):[User!]!
 }
 
 `
-
-export const resolvers={
-    Query:{
-        listusers:()=>users
-    }
-}

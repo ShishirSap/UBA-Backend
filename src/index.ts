@@ -5,7 +5,8 @@ import { ApolloServer } from '@apollo/server'
 import {expressMiddleware} from '@apollo/server/express4'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-import { typeDefs,resolvers } from './graphql/schema'
+import { typeDefs } from './graphql/schema'
+import {resolvers} from './graphql/resolvers'
 
 
 const app=express()
