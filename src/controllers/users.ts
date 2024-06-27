@@ -4,19 +4,22 @@ import { CreateUserDto } from "../dtos/CreateUser.dto";
 
 import {v4 as uuidv4} from 'uuid'
 
+import authSignup from "../validator/schema";
+import Joi from "joi";
+
 
 export const users:CreateUserDto[]=[]
 
 
 
 export function createUser(req:Request<{},{},CreateUserDto>,res:Response){
-  
+
 const {name,email,id,password}=req.body;
 const newUser:CreateUserDto={id:uuidv4(),name,email,password}
 users.push(newUser)
 res.status(201).json(newUser)
+ }
 
-}
 
 
 
@@ -55,7 +58,7 @@ export const deleteUser = (req: Request, res: Response): void => {
     const userIndex = users.findIndex(u => u.id === req.params.id);
     if (userIndex > -1) {
         const deletedUser = users.splice(userIndex, 1);
-        res.json(deletedUser[0]);
+        res.json(`${deletedUser[0].name} was successfully deleted`);
     } else {
         res.status(404).json({ message: 'User not found' });
     }

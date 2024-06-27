@@ -12,8 +12,13 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@apollo/server": "^4.10.4",
+    "@types/cors": "^2.8.17",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "joi": "^17.13.3",
     "mongoose": "^8.4.3",
     "uuid": "^10.0.0"
   },
