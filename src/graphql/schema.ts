@@ -7,9 +7,17 @@ id:String!
 name:String!
 email:String!
 }
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+}
+type UserConnection{
+users:[User!]!
+pageInfo:PageInfo!
+}
 
 type Query{
-listusers:[User!]!,
+listusers(cursor:String,limit:Int):UserConnection!
 searchUsers(name:String,email:String):[User!]!
 }
 
