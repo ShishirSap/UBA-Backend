@@ -1,27 +1,17 @@
 import { users } from "../controllers/users";
+import { paginate } from "./cursorpaginationhelper";
 
 export const resolvers = {
     Query: {
       listusers: (_:any, args:{cursor?:string;limit?:number}) =>{
         console.log('args are',args)
-        const {cursor,limit=5}=args
-        let startIndex=0;
-        if(cursor){
-          startIndex=users.findIndex(user=>user.id===cursor)+1
-          console.log('startindex is ',startIndex)
-        }
+        const cursor=args.cursor||null
+        const limit=args.limit||5
+        const { items, pageInfo } = paginate(users, cursor, limit);
 
-        const slicedUsers= users.slice(startIndex,startIndex+limit)
-        console.log(slicedUsers)
-        const endCursor=slicedUsers.length>0?slicedUsers[slicedUsers.length-1].id:null;
-        console.log("endcursor",endCursor)
-
-        return{
-          users:slicedUsers,
-          pageInfo:{
-            endCursor,
-            hasNextPage:startIndex+limit<users.length
-          }
+        return {
+          users:items,
+          pageInfo
         }
       },
 
@@ -37,13 +27,23 @@ export const resolvers = {
 
 
 
-      searchUsers: (_: any, args: { name?: string; email?: string; age?: number }) => {
-        return users.filter(user => {
-          return (
-            (!args.name || user.name.includes(args.name)) &&
-            (!args.email || user.email.includes(args.email))
-          );
-        });
+      searchUsers: (_: any, args: { name?: string; email?: string; age?: number; cursor?: string; limit?: number }) => {
+       const fileterdUsers=users.filter(user=>{
+        return(
+        (!args.name|| user.name.includes(args.name))&&
+        (!args.email||user.email.includes(args.email))
+        )
+       })
+
+       const cursor=args.cursor||null;
+       const limit=args.limit||5
+
+       const {items,pageInfo}=paginate(fileterdUsers,cursor,limit)
+return{
+  users:items,
+  pageInfo,
+}
+
       },
     },
   };
