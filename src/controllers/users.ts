@@ -24,7 +24,7 @@ res.status(201).json(newUser)
 
 
 export function getAllUsers(req:Request,res:Response){
-    res.json(users)
+    res.status(200).json(users)
 }
 
 export const getUser = (req: Request, res: Response): void => {
