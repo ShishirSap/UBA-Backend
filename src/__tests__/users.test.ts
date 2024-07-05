@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { createUser,getAllUsers,getUser, updateUser, users } from '../controllers/users';
+import { createUser,deleteUser,getAllUsers,getUser, updateUser, users } from '../controllers/users';
 import schemaValidator from '../middlewares/schemaValidator';
 import schemas from '../validator/schema';
 
@@ -145,8 +145,11 @@ describe('User CRUD Controller - createUser with validation', () => {
                     users.push({id:'1',name:'John Doe',email:'john@example.com',password:'Password123!'})
                     updateUser(req as Request,res as Response)
                     expect(users[0].name).toBe('Jane Doe')
-                    expect(mockJson).toHaveBeenCalledWith(users[0])
+                    expect(mockJson).toHaveBeenCalledWith({id:'1',name:'Jane Doe',email:'john@example.com',password:'Password123!'})
                 })
+                
+
+
 
                 it('should return 404 if user not found',()=>{
                     req.params={id:'1'}
@@ -157,12 +160,28 @@ describe('User CRUD Controller - createUser with validation', () => {
                 })
               
             })
+
+            describe('deleteUser', () => {
+                it('should delete a user if found',()=>{
+                    req.params={id:'1'}
+                    users.push({id:'1',name:'Shishir',email:'shishir@gmail.com',password:'Password123!'})
+                    deleteUser(req as Request,res as Response)
+                    expect(users.length).toBe(0)
+                    expect(mockJson).toHaveBeenCalledWith({message:'Shishir was successfully deleted'})
+                    
+                })
+
+                it('should return 404 if user not found', () => {
+                    req.params = { id: '1' };
             
+                    deleteUser(req as Request, res as Response);
             
-    
-    
-    
-    
+                    expect(mockStatus).toHaveBeenCalledWith(404);
+                    expect(mockJson).toHaveBeenCalledWith({ message: 'User not found' });
+                });
+              
+            })
+            
    
     
       

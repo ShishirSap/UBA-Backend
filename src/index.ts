@@ -11,6 +11,8 @@ import {resolvers} from './graphql/resolvers'
 
 const app=express()
 app.use(express.urlencoded({extended:false}))
+app.use(cors())
+app.use(bodyParser.json())
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -21,8 +23,7 @@ app.use('/api/users',userRouter)
 app.get('/',(req:Request,res:Response,next:NextFunction)=>{
     res.send('hello world')
 })
-app.use(cors())
-app.use(bodyParser.json())
+
 
 const server = new ApolloServer({
    typeDefs,
@@ -35,8 +36,13 @@ async function serverstart(){
  serverstart()
 
 
+ if(process.env.NODE_ENV !=='test'){
+    app.listen(PORT,()=>{
+        console.log(`Running on port ${PORT}`)
+    })
+ }
 
-app.listen(PORT,()=>{
-    console.log(`Running on port ${PORT}`)
-})
+
+
+export default app
 

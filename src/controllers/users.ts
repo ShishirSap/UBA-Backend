@@ -58,7 +58,9 @@ export const deleteUser = (req: Request, res: Response): void => {
     const userIndex = users.findIndex(u => u.id === req.params.id);
     if (userIndex > -1) {
         const deletedUser = users.splice(userIndex, 1);
-        res.json(`${deletedUser[0].name} was successfully deleted`);
+        res.json({
+            message:`${deletedUser[0].name} was successfully deleted`
+        });
     } else {
         res.status(404).json({ message: 'User not found' });
     }
