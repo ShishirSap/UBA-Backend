@@ -1,8 +1,9 @@
 
 import request from "supertest";
-import app from "..";
+import {app} from "..";
 import { users } from "../controllers/users";
 import { CreateUserDto } from "../dtos/CreateUser.dto";
+import Test from "supertest/lib/test";
 
 
 
@@ -98,6 +99,22 @@ describe('User routes', () => {
         expect(users[0]).toMatchObject(updatedData);
       });
     
+
+      it('PUT /api/users/:id - shouldnot update user with invalid email',async()=>{
+        const newUser = {
+          id: '1',
+          name: 'John Doe',
+          email: 'john@example.com',
+          password: 'Password1!',
+        };
+        users.push(newUser);
+        const updatedData={
+          email:'John@@2'
+        }
+        const res=await request(app).put('/api/users/1').send(updatedData)
+        expect(res.status).toBe(422)
+        
+      })
       it('DELETE /api/users/:id - should delete a user', async () => {
         const newUser = {
           id: '1',
@@ -113,6 +130,38 @@ describe('User routes', () => {
         expect(users).toHaveLength(0);
       });
 
+      describe('Extra routes', () => {
+        test('GET /api/users/timeout/simulate - should return 504 Gateway Timeout', async () => {
+          const res = await request(app).get('/api/users/timeout/simulate');
+          
+          expect(res.status).toBe(504);
+          expect(res.text).toBe('Gateway Timeout');
+        },10000);
+      
+        test('All methods except get on /api/users/ - should return 405 Method Not Allowed', async () => {
+      
+          const methods :{[key:string]:(url:string)=>Test}={
+            post:request(app).post,
+            put:request(app).put,
+            patch:request(app).patch,
+            delete:request(app).delete,
+
+          }
+
+          for(const method in methods){
+            const res=await methods[method]('/api/users')
+            expect(res.status).toBe(405)
+            expect(res.text).toBe('Method Not Allowed')
+          }
+
+          
+      
+        
+        });
+      });
+
 
 
 })
+
+

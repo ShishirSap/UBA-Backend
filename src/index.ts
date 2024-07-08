@@ -44,5 +44,5 @@ async function serverstart(){
 
 
 
-export default app
+export {app,server}
 

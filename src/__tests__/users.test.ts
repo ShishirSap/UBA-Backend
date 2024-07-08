@@ -31,6 +31,11 @@ describe('User CRUD Controller - createUser with validation', () => {
 
     describe('create', () => {
 
+
+        test('Validator -should throw an error if schema not found', () => {
+            expect(() => schemaValidator('/invalid/path')).toThrow('Schema not found for path: /invalid/path');
+          });
+
         it('should create a new user with valid data', async () => {
             req.body = { name: 'John Doe', email: 'john@example.com', password: 'Password123!' };
     

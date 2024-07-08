@@ -4,7 +4,6 @@ import { paginate } from "./cursorpaginationhelper";
 export const resolvers = {
     Query: {
       listusers: (_:any, args:{cursor?:string;limit?:number}) =>{
-        console.log('args are',args)
         const cursor=args.cursor||null
         const limit=args.limit||5
         const { items, pageInfo } = paginate(users, cursor, limit);
@@ -14,17 +13,6 @@ export const resolvers = {
           pageInfo
         }
       },
-
-
-
-
-
-
-
-
-
-
-
 
 
       searchUsers: (_: any, args: { name?: string; email?: string; age?: number; cursor?: string; limit?: number }) => {
