@@ -56,7 +56,7 @@ const updateInternSchema = Joi.object({
   major: Joi.string().optional(),
   dateOfBirth: Joi.date().optional(),
   gender: Joi.string().valid('M', 'F', 'Other').optional(),
-  password:Joi.string().pattern(PASSWORD_REGEX).min(8).required()
+  password:Joi.string().pattern(PASSWORD_REGEX).min(8).optional()
 });
 
   export default{

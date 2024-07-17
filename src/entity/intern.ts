@@ -18,8 +18,6 @@ export class Intern extends BaseEntity{
     @Column()
     password:string
 
-
-
     @Column({ nullable: true })
     phoneNumber: string;
   

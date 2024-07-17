@@ -60,3 +60,63 @@ export const getAllInterns=async(req:Request,res:Response)=>{
         return res.status(500).json({error:'Error fetching interns'})
     }
 }
+
+
+export const updateIntern = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const {
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        address,
+        university,
+        degree,
+        major,
+        dateOfBirth,
+        gender,
+        password
+    } = req.body;
+
+    try {
+        const intern = await internRepository.findOneBy({ id: parseInt(id, 10) });
+        if (!intern) {
+            return res.status(404).json({ error: 'Intern not found' });
+        }
+
+        intern.firstName = firstName || intern.firstName;
+        intern.lastName = lastName || intern.lastName;
+        intern.email = email || intern.email;
+        intern.phoneNumber = phoneNumber || intern.phoneNumber;
+        intern.address = address || intern.address;
+        intern.university = university || intern.university;
+        intern.degree = degree || intern.degree;
+        intern.major = major || intern.major;  
+        intern.dateOfBirth = dateOfBirth || intern.dateOfBirth;
+        intern.gender = gender || intern.gender;
+        intern.password = password || intern.password;
+        
+
+        await internRepository.save(intern);
+        return res.status(200).json(intern);
+    } catch (error) {
+        return res.status(500).json({ error: 'Error updating intern' });
+    }
+};
+
+export const deleteIntern = async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    try {
+        const intern = await internRepository.findOneBy({ id: parseInt(id, 10) });
+        if (!intern) {
+            return res.status(404).json({ error: 'Intern not found' });
+        }
+
+        await internRepository.remove(intern);
+        return res.status(200).json({ message: 'Intern deleted successfully' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Error deleting intern' });
+    }
+};
+
