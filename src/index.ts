@@ -6,11 +6,11 @@ import { ApolloServer } from '@apollo/server'
 import {expressMiddleware} from '@apollo/server/express4'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-import { typeDefs } from './graphql/schema'
-import {resolvers} from './graphql/resolvers'
 import dotenv from 'dotenv'
 import 'reflect-metadata'
 import { AppDataSource } from './data-source'
+import { interntypeDefs } from './graphql/interns/schema'
+import { internResolvers } from './graphql/interns/resolvers'
 
 
 
@@ -41,8 +41,8 @@ app.get('/',(req:Request,res:Response,next:NextFunction)=>{
 
 
 const server = new ApolloServer({
-   typeDefs,
-   resolvers
+  typeDefs:interntypeDefs,
+   resolvers:internResolvers
 })
 async function serverstart(){
     await server.start()

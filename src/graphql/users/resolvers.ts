@@ -1,5 +1,5 @@
-import { users } from "../controllers/users";
-import { paginate } from "./cursorpaginationhelper";
+import { users } from "../../controllers/users";
+import { paginate } from "../cursorpaginationhelper";
 
 export const resolvers = {
     Query: {

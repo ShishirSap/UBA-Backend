@@ -1,5 +1,5 @@
 
-import { users } from "../controllers/users"
+
 
 export const typeDefs=`
 type User{
