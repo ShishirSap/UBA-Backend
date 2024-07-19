@@ -11,8 +11,8 @@ export const AppDataSource=new DataSource({
     password:process.env.dbpassword,
     database:'IMS',
     synchronize:false,
-    // logging:["query","error"],
+    logging:["query","error"],
     entities:["src/entity/**/*.ts"],
     migrations: ["src/migration/**/*.ts"],
-  subscribers: ["src/subscriber/**/*.ts"],
+    subscribers: ["src/subscriber/**/*.ts"],
 })

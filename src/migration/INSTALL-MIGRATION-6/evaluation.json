@@ -1,0 +1,6 @@
+{
+    "depends_upon":"INSTALL-MIGRATION-5",
+    "script":"CREATE TABLE evaluation ( id INT AUTO_INCREMENT PRIMARY KEY, createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  performanceScore DECIMAL(3, 2) NULL, feedback TEXT NULL, internId INT, mentorId INT, CONSTRAINT FK_evaluation_intern FOREIGN KEY (internId) REFERENCES intern(id),  CONSTRAINT FK_evaluation_mentor FOREIGN KEY (mentorId) REFERENCES mentor(id)  );",
+      "type":"INSTALL",
+      "id":"INSTALL-MIGRATON-6"
+}

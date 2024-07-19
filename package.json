@@ -7,7 +7,9 @@
     "start": "node ./dist/index.js",
     "dev": "nodemon ./src/index.ts",
     "test": "jest",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "migrate:install": "ts-node src/scripts/migrate.ts INSTALL",
+    "migrate:update": "ts-node src/scripts/migrate.ts UPDATE"
   },
   "keywords": [],
   "author": "",

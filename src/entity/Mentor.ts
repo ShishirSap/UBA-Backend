@@ -1,7 +1,8 @@
-import { Entity,Column, OneToMany } from "typeorm";
+import { Entity,Column, OneToMany, ManyToOne } from "typeorm";
 import { BaseEntity } from "./baseentity";
 import { Internship } from "./internshipProgram";
 import { Evaluation } from "./evaluations";
+import { Department } from "./Department";
 
 @Entity({name:'mentor'})
 export class Mentor extends BaseEntity{
@@ -17,8 +18,8 @@ export class Mentor extends BaseEntity{
     @Column({ nullable: true })
     phoneNumber: string;
   
-    @Column({ nullable: true })
-    department: string;
+    @ManyToOne(()=>Department,department=>department.mentors)
+    department:Department
 
     @OneToMany(()=>Internship,internship=>internship.mentor)
     internships:Internship[]
