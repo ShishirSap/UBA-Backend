@@ -1,12 +1,10 @@
 import { Entity,Column, ManyToOne, OneToMany } from "typeorm";
 import { BaseEntity } from "./baseentity";
-import { Department } from "./Department";
-import { Internship } from "./internshipProgram";
-
-
+import { department, } from "./Department";
+import { internship } from "./internshipProgram";
 @Entity({name:'position'})
-export class Position extends BaseEntity{
-    @Column()
+export class designation extends BaseEntity{
+    @Column({type:'text'})
     title: string;
   
     @Column({ type: 'text', nullable: true })
@@ -15,10 +13,10 @@ export class Position extends BaseEntity{
     @Column({ type: 'text', nullable: true })
     requirements: string;
 
-   @ManyToOne(()=>Department,department=>department.positions)
-   department:Department;
+   @ManyToOne(()=>department,department=>department.designations)
+   department:department;
 
-   @OneToMany(()=>Internship,internship=>internship.position)
-   internships:Internship[]
+   @OneToMany(()=>internship,internship=>internship.designation)
+   internships:internship[]
   
 }

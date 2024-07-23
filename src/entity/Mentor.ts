@@ -1,30 +1,30 @@
-import { Entity,Column, OneToMany, ManyToOne } from "typeorm";
+import { Entity, Column, OneToMany, ManyToOne } from "typeorm";
 import { BaseEntity } from "./baseentity";
-import { Internship } from "./internshipProgram";
+import { internship } from "./internshipProgram";
 import { Evaluation } from "./evaluations";
-import { Department } from "./Department";
+import { department } from "./Department";
 
-@Entity({name:'mentor'})
-export class Mentor extends BaseEntity{
-    @Column()
+@Entity({ name: 'mentor' })
+export class Mentor extends BaseEntity {
+
+    @Column({ type: 'varchar', length: 255 })
     firstName: string;
-  
-    @Column()
-    lastName: string;
-  
-    @Column({ unique: true })
-    email: string;
-  
-    @Column({ nullable: true })
-    phoneNumber: string;
-  
-    @ManyToOne(()=>Department,department=>department.mentors)
-    department:Department
 
-    @OneToMany(()=>Internship,internship=>internship.mentor)
-    internships:Internship[]
+    @Column({ type: 'varchar', length: 255 })
+    lastName: string;
+
+    @Column({ type: 'varchar', length: 255, unique: true })
+    email: string;
+
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    phoneNumber: string;
+
+    @ManyToOne(() => department, department => department.mentors)
+    department:department;
+
+    @OneToMany(() => internship, internship => internship.mentor)
+    internships: internship[];
 
     @OneToMany(() => Evaluation, evaluation => evaluation.mentor)
     evaluations: Evaluation[];
-  
 }

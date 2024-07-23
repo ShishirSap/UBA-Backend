@@ -5,6 +5,10 @@
 
 /** @type {import('jest').Config} */
 const config = {
+  testMatch: [
+    '**/__tests__/**/*.test.ts',
+    '**/?(*.)+(spec|test).ts',
+  ],
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -182,7 +186,6 @@ const config = {
     "^.+\\.tsx?$": "babel-jest",
     "^.+\\.m?.js$":"babel-jest"
   },
-
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: [
   //   "\\\\node_modules\\\\",

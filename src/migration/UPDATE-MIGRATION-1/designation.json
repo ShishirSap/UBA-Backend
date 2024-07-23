@@ -1,0 +1,6 @@
+{
+    "depends_upon": null,
+    "script": "ALTER TABLE designation DROP COLUMN requirements;",
+    "type": "UPDATE",
+    "id": "update-migration-1"
+}

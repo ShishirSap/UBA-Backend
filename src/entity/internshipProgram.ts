@@ -1,17 +1,17 @@
 import { Column, Entity, ManyToOne } from "typeorm";
 import { BaseEntity } from "./baseentity";
 import { Intern } from "./intern";
-import { Position } from "./position";
+import { designation} from "./position";
 import { Mentor } from "./Mentor";
 
 @Entity({name:'internship'})
-export class Internship extends BaseEntity {
+export class internship extends BaseEntity {
     
 @ManyToOne(()=>Intern,intern=>intern.internships)
 intern:Intern
 
-@ManyToOne(() => Position, position => position.internships)
-position: Position;
+@ManyToOne(() => designation, designation => designation.internships)
+designation: designation;
 
 @ManyToOne(() => Mentor, mentor => mentor.internships)
 mentor: Mentor;

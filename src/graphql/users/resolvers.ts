@@ -1,7 +1,7 @@
 import { users } from "../../controllers/users";
 import { paginate } from "../cursorpaginationhelper";
 
-export const resolvers = {
+export const userResolvers = {
     Query: {
       listusers: (_:any, args:{cursor?:string;limit?:number}) =>{
         const cursor=args.cursor||null

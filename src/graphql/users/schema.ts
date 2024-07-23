@@ -1,7 +1,7 @@
 
 
 
-export const typeDefs=`
+export const usertypeDefs=`
 type User{
 id:String!
 name:String!

@@ -1,52 +1,50 @@
-import { Entity,PrimaryGeneratedColumn,Column, ManyToOne, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
 import { BaseEntity } from "./baseentity";
-import { Internship } from "./internshipProgram";
+import { internship } from "./internshipProgram";
 import { Evaluation } from "./evaluations";
 
-@Entity({name:'intern'})
-export class Intern extends BaseEntity{
+@Entity({ name: 'intern' })
+export class Intern extends BaseEntity {
 
-    @Column()
-    firstName:string;
+    @Column({ type: 'varchar', length: 255 })
+    firstName: string;
 
-    @Column()
-    lastName:string;
+    @Column({ type: 'varchar', length: 255 })
+    lastName: string;
 
-    @Column({unique:true})
-    email:string
+    @Column({ type: 'varchar', length: 255, unique: true })
+    email: string;
 
-    @Column()
-    password:string
+    @Column({ type: 'varchar', length: 255 })
+    password: string;
 
-    @Column({ nullable: true })
+    @Column({ type: 'varchar', length: 255, nullable: true })
     phoneNumber: string;
-  
-    @Column({ nullable: true })
+
+    @Column({ type: 'varchar', length: 255, nullable: true })
     address: string;
-  
-    @Column({ nullable: true })
+
+    @Column({ type: 'varchar', length: 255, nullable: true })
     university: string;
-  
-    @Column({ nullable: true })
+
+    @Column({ type: 'varchar', length: 255, nullable: true })
     degree: string;
-  
-    @Column({ nullable: true })
+
+    @Column({ type: 'varchar', length: 255, nullable: true })
     major: string;
-  
-    @Column({ nullable: true })
+
+    @Column({ type: 'date', nullable: true })
     dateOfBirth: Date;
-  
-    @Column({ nullable: true, type: 'enum', enum: ['M', 'F', 'Other'] })
-    gender: 'M' | 'F' | 'Other';
 
+    // @Column({ type: 'enum', enum: ['M', 'F', 'Other'], nullable: true })
+    // gender: 'M' | 'F' | 'Other';
 
-    @OneToMany(()=>Internship,internship=>internship.intern)
-    internships:Internship[]
+    @Column('text')
+    gender:'M'|'F'|'Other'
 
-    @OneToMany(()=>Evaluation,evaluation=>evaluation.intern)
-    evaluations:Evaluation[]
+    @OneToMany(() => internship, internship => internship.intern)
+    internships: internship[];
 
-
-
-
+    @OneToMany(() => Evaluation, evaluation => evaluation.intern)
+    evaluations: Evaluation[];
 }

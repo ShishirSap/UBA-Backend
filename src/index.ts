@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import express, { NextFunction } from 'express'
 import { Request,Response } from 'express'
 import userRouter from './routes/users'
@@ -7,10 +8,13 @@ import {expressMiddleware} from '@apollo/server/express4'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
-import 'reflect-metadata'
 import { AppDataSource } from './data-source'
 import { interntypeDefs } from './graphql/interns/schema'
 import { internResolvers } from './graphql/interns/resolvers'
+import { usertypeDefs } from './graphql/users/schema'
+import { userResolvers } from './graphql/users/resolvers'
+import { mergeResolvers, mergeType, mergeTypeDefs } from '@graphql-tools/merge'
+
 
 
 
@@ -25,12 +29,12 @@ dotenv.config()
 const PORT=process.env.PORT
 
 
-AppDataSource.initialize()
-.then(()=>{
-    console.log("Database connection successfull")
+//  AppDataSource.initialize()
+// .then(()=>{
+//     console.log("Database connection successfull")
 
-})
-.catch((error)=>console.log(error))
+// })
+// .catch((error)=>console.log(error))
 
 app.use('/api/users',userRouter)
 app.use('/api/intern',internRouter)
@@ -41,8 +45,8 @@ app.get('/',(req:Request,res:Response,next:NextFunction)=>{
 
 
 const server = new ApolloServer({
-  typeDefs:interntypeDefs,
-   resolvers:internResolvers
+  typeDefs:usertypeDefs,
+   resolvers:userResolvers
 })
 async function serverstart(){
     await server.start()

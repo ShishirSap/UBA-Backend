@@ -1,9 +1,10 @@
 import { Request,Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Intern } from "../entity/intern";
-import { QueryFailedError } from "typeorm";
-const internRepository=AppDataSource.getRepository(Intern)
+import { QueryFailedError, Repository } from "typeorm";
 export const createIntern=async(req:Request,res:Response)=>{
+    console.log('Request from controller is',req)
+    const internRepository=req.internRepository as Repository<Intern>
     const{firstName,lastName,email,phoneNumber,address,university,degree,major,password,dateOfBirth,gender}=req.body
 
 
@@ -20,6 +21,7 @@ export const createIntern=async(req:Request,res:Response)=>{
         intern.major = major;
         intern.dateOfBirth = dateOfBirth;
         intern.gender = gender;
+       
         await internRepository.save(intern)
         return res.status(201).json(intern)
 
@@ -53,6 +55,7 @@ export const createIntern=async(req:Request,res:Response)=>{
 
 export const getAllInterns=async(req:Request,res:Response)=>{
     try{
+        const internRepository=req.internRepository as Repository<Intern>
         const interns=await internRepository.find({})
         return res.status(200).json(interns)
     }
@@ -79,6 +82,8 @@ export const updateIntern = async (req: Request, res: Response) => {
     } = req.body;
 
     try {
+        const internRepository=req.internRepository as Repository<Intern>
+
         const intern = await internRepository.findOneBy({ id: parseInt(id, 10) });
         if (!intern) {
             return res.status(404).json({ error: 'Intern not found' });
@@ -108,6 +113,8 @@ export const deleteIntern = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
+        const internRepository=req.internRepository as Repository<Intern>
+
         const intern = await internRepository.findOneBy({ id: parseInt(id, 10) });
         if (!intern) {
             return res.status(404).json({ error: 'Intern not found' });
