@@ -67,6 +67,7 @@ export const getAllInterns=async(req:Request,res:Response)=>{
 
 export const updateIntern = async (req: Request, res: Response) => {
     const { id } = req.params;
+    console.log('req for update is',req.body)
     const {
         firstName,
         lastName,
@@ -80,14 +81,17 @@ export const updateIntern = async (req: Request, res: Response) => {
         gender,
         password
     } = req.body;
+    
 
     try {
         const internRepository=req.internRepository as Repository<Intern>
 
         const intern = await internRepository.findOneBy({ id: parseInt(id, 10) });
+        console.log('intern found to be updated is',intern)
         if (!intern) {
             return res.status(404).json({ error: 'Intern not found' });
         }
+        console.log('before update intern.firstName is ',intern.firstName)
 
         intern.firstName = firstName || intern.firstName;
         intern.lastName = lastName || intern.lastName;
@@ -100,9 +104,12 @@ export const updateIntern = async (req: Request, res: Response) => {
         intern.dateOfBirth = dateOfBirth || intern.dateOfBirth;
         intern.gender = gender || intern.gender;
         intern.password = password || intern.password;
-        
+        console.log('after update intern.firstName is ',intern.firstName)
+
+
 
         await internRepository.save(intern);
+        console.log(intern)
         return res.status(200).json(intern);
     } catch (error) {
         return res.status(500).json({ error: 'Error updating intern' });

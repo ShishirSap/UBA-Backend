@@ -1,7 +1,7 @@
 import { Request,Response } from "express"
 import { Intern } from "../../entity/intern"
 import { TestHelper } from "../dbInstanceHelper"
-import { createIntern } from "../../controllers/intern"
+import { createIntern, deleteIntern, getAllInterns, updateIntern } from "../../controllers/intern"
 
 
 describe('Intern controller test', () => {
@@ -57,9 +57,100 @@ let internRepository:any;
         })
       
     })
+
+    describe('Get All interns', () => {
+        it('should return all interns',async()=>{
+            const req={
+                internRepository:internRepository
+            } as Request;
+            const res={
+                status:jest.fn().mockReturnThis(),
+                json:jest.fn()
+            } as unknown as Response
+
+
+            await getAllInterns(req,res)
+            expect(res.status).toHaveBeenCalledWith(200)
+            expect(res.json).toHaveBeenCalledWith(expect.any(Array))
+        })
+      
+    })
+
+    describe('Update intern', () => {
+
+        it('should update an intern',async()=>{
+            const newIntern=internRepository.create({
+                firstName: 'Jane',
+                lastName: 'Doe',
+                email: 'jane.doe@example.com',
+                phoneNumber: '9876543210',
+                address: '456 Main St',
+                university: 'Another University',
+                degree: 'Masters',
+                major: 'Information Technology',
+                password: 'Password123!',
+                dateOfBirth: '1992-02-02',
+                gender: 'F',
+            })
+            await internRepository.save(newIntern)
+            const req={
+                params:{id:newIntern.id.toString()},
+                body:{firstName:'Janeupdated'},
+                internRepository:internRepository,
+            } as unknown as Request
+
+            const res = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn(),
+              } as unknown as Response;
+          
+              await updateIntern(req, res);
+          
+              expect(res.status).toHaveBeenCalledWith(200);
+              expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
+                firstName: 'Janeupdated',
+
+              }));
+        })
+      
+    })
+
+
+    describe('Delete intern', () => {
+
+        it('should delete an intern if found',async()=>{
+           const newIntern = internRepository.create({
+            firstName: 'Mark',
+            lastName: 'Smith',
+            email: 'mark.smith@example.com',
+            phoneNumber: '5551234567',
+            address: '789 Main St',
+            university: 'Test University',
+            degree: 'PhD',
+            major: 'Physics',
+            password: 'Password123!',
+            dateOfBirth: '1988-08-08',
+            gender: 'Male',
+          });
+          await internRepository.save(newIntern);
+      
+          const req = {
+            params: { id: newIntern.id.toString() },
+            internRepository: internRepository
+          } as unknown as Request;
+      
+          const res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+          } as unknown as Response;
+      
+          await deleteIntern(req, res);
+      
+          expect(res.status).toHaveBeenCalledWith(200);
+          expect(res.json).toHaveBeenCalledWith({ message: 'Intern deleted successfully' });
+        });
+
+        })
     
-
-
-
   
 })
