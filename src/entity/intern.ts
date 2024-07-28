@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "ty
 import { BaseEntity } from "./baseentity";
 import { internship } from "./internshipProgram";
 import { Evaluation } from "./evaluations";
+import { UserRole } from "./userrole";
 
 @Entity({ name: 'intern' })
 export class Intern extends BaseEntity {
@@ -36,6 +37,9 @@ export class Intern extends BaseEntity {
     @Column({ type: 'date', nullable: true })
     dateOfBirth: Date;
 
+    @Column()
+    userType:'mentor'|'admin'|'intern'
+
     // @Column({ type: 'enum', enum: ['M', 'F', 'Other'], nullable: true })
     // gender: 'M' | 'F' | 'Other';
 
@@ -47,4 +51,7 @@ export class Intern extends BaseEntity {
 
     @OneToMany(() => Evaluation, evaluation => evaluation.intern)
     evaluations: Evaluation[];
+
+    @OneToMany(() => UserRole, userRole => userRole.intern)
+    userRoles: UserRole[];
 }

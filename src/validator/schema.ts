@@ -31,6 +31,7 @@ const PASSWORD_REGEX = new RegExp(
     university: Joi.string().optional(),
     degree: Joi.string().optional(),
     major: Joi.string().optional(),
+    userType:Joi.string().optional(),
     dateOfBirth: Joi.date().optional().custom((value,helpers)=>{
       const now=new Date()
       const dob=new Date(value)
@@ -55,6 +56,7 @@ const updateInternSchema = Joi.object({
   degree: Joi.string().optional(),
   major: Joi.string().optional(),
   dateOfBirth: Joi.date().optional(),
+  userType:Joi.string().optional(),
   gender: Joi.string().valid('M', 'F', 'Other').optional(),
   password:Joi.string().pattern(PASSWORD_REGEX).min(8).optional()
 });

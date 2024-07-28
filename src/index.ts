@@ -23,18 +23,30 @@ const app=express()
 app.use(express.urlencoded({extended:false}))
 app.use(cors())
 app.use(bodyParser.json())
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error(err);
+    if (err instanceof Error) {
+        const sanitizedError = {
+            message: err.message,
+            stack: err.stack
+        };
+        res.status(500).json(sanitizedError);
+    } else {
+        res.status(500).json({ message: 'An unknown error occurred' });
+    }
+});
 
 
 dotenv.config()
 const PORT=process.env.PORT
 
 
-//  AppDataSource.initialize()
-// .then(()=>{
-//     console.log("Database connection successfull")
+ AppDataSource.initialize()
+.then(()=>{
+    console.log("Database connection successfull")
 
-// })
-// .catch((error)=>console.log(error))
+})
+.catch((error)=>console.log(error))
 
 app.use('/api/users',userRouter)
 app.use('/api/intern',internRouter)

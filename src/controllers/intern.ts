@@ -1,11 +1,22 @@
-import { Request,Response } from "express";
+import { NextFunction, Request,Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Intern } from "../entity/intern";
 import { QueryFailedError, Repository } from "typeorm";
-export const createIntern=async(req:Request,res:Response)=>{
-    console.log('Request from controller is',req)
+import { encrypt } from "../helpers/helpers";
+import { Role } from "../entity/role";
+import { UserRole } from "../entity/userrole";
+
+interface customRequest extends Request{
+    internRepository?:Repository<Intern>
+}
+export const createIntern=async(req:customRequest,res:Response)=>{
+    console.log('req.body is',req.body)
+    
     const internRepository=req.internRepository as Repository<Intern>
-    const{firstName,lastName,email,phoneNumber,address,university,degree,major,password,dateOfBirth,gender}=req.body
+    const roleRepository=AppDataSource.getRepository(Role)
+    const userRoleRepository=AppDataSource.getRepository(UserRole)
+    const{firstName,lastName,email,phoneNumber,address,university,degree,major,password,dateOfBirth,gender,userType}=req.body
+    const encryptedPassword=await encrypt.encryptpass(password)
 
 
     try{
@@ -13,7 +24,7 @@ export const createIntern=async(req:Request,res:Response)=>{
         intern.firstName = firstName;
         intern.lastName = lastName;
         intern.email = email;
-        intern.password=password;
+        intern.password=encryptedPassword;
         intern.phoneNumber = phoneNumber;
         intern.address = address;
         intern.university = university;
@@ -21,9 +32,28 @@ export const createIntern=async(req:Request,res:Response)=>{
         intern.major = major;
         intern.dateOfBirth = dateOfBirth;
         intern.gender = gender;
+        intern.userType=userType
        
         await internRepository.save(intern)
-        return res.status(201).json(intern)
+      
+
+        
+        const token=encrypt.generateToken({id:intern.id,firstName:firstName,lastName:lastName,email:intern.email,userType:intern.userType})
+        
+
+        const role=await roleRepository.findOne({where:{name:`${intern.userType}`}})
+        if(!role){
+         return res.status(500).json({message:'No roles match the provided role'})
+        }
+        const userRole=new UserRole()
+        userRole.intern=intern
+        userRole.roles=role
+        await userRoleRepository.save(userRole)
+ 
+        
+        
+
+        return res.status(201).json({message:"user created successfully",intern,userRole,token})
 
 
     }
@@ -53,7 +83,7 @@ export const createIntern=async(req:Request,res:Response)=>{
 
 
 
-export const getAllInterns=async(req:Request,res:Response)=>{
+export const getAllInterns=async(req:customRequest,res:Response)=>{
     try{
         const internRepository=req.internRepository as Repository<Intern>
         const interns=await internRepository.find({})
@@ -65,7 +95,7 @@ export const getAllInterns=async(req:Request,res:Response)=>{
 }
 
 
-export const updateIntern = async (req: Request, res: Response) => {
+export const updateIntern = async (req: customRequest, res: Response) => {
     const { id } = req.params;
     console.log('req for update is',req.body)
     const {
@@ -116,7 +146,7 @@ export const updateIntern = async (req: Request, res: Response) => {
     }
 };
 
-export const deleteIntern = async (req: Request, res: Response) => {
+export const deleteIntern = async (req: customRequest, res: Response) => {
     const { id } = req.params;
 
     try {

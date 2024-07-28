@@ -1,0 +1,6 @@
+{
+    "depends_upon":"INSTALL-MIGRATION-9",
+    "script":"CREATE TABLE IF NOT EXISTS role_permissions (   role_id BIGINT NOT NULL,    permission_id BIGINT NOT NULL,  granted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  PRIMARY KEY (role_id, permission_id), FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,   FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE);",
+      "type":"INSTALL",
+      "id":"INSTALL-MIGRATON-10"
+}
