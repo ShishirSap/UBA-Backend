@@ -2,7 +2,7 @@ import { Entity, PrimaryColumn, ManyToOne, JoinColumn, CreateDateColumn } from '
 import { Role } from './role';
 import { Permission } from './permission';
 
-@Entity()
+@Entity('role_permissions')
 export class RolePermission {
     @PrimaryColumn()
     role_id: bigint;
