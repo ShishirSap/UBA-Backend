@@ -84,6 +84,7 @@ export const createIntern=async(req:customRequest,res:Response)=>{
 
 
 export const getAllInterns=async(req:customRequest,res:Response)=>{
+    console.log('Getall intern is hit')
     try{
         const internRepository=req.internRepository as Repository<Intern>
         const interns=await internRepository.find({})

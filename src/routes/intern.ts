@@ -3,9 +3,11 @@ import { createIntern, deleteIntern, getAllInterns, updateIntern } from "../cont
 import schemaValidator from "../middlewares/schemaValidator";
 import { attachRepositoryMiddleware } from "../middlewares/attachRepository";
 import { authentication, authorizePermission } from "../middlewares/auth.middleware";
+import { AuthController } from "../controllers/auth.controller";
 
 const router=Router()
 router.use(attachRepositoryMiddleware);
+router.post('/auth/login',AuthController.login)
 router.post('/',schemaValidator('/auth/intern/signup'),createIntern)
 router.get('/',authentication,authorizePermission('read_intern'),getAllInterns)
 router.put('/:id', schemaValidator('/auth/intern/update'), updateIntern);
