@@ -37,7 +37,7 @@ export class Intern extends BaseEntity {
     @Column({ type: 'date', nullable: true })
     dateOfBirth: Date;
 
-    @Column({default:'intern'})
+    @Column({type:'text',default:'intern'})
     userType:'mentor'|'admin'|'intern'
 
     // @Column({ type: 'enum', enum: ['M', 'F', 'Other'], nullable: true })

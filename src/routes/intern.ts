@@ -10,7 +10,7 @@ router.use(attachRepositoryMiddleware);
 router.post('/auth/login',AuthController.login)
 router.post('/',schemaValidator('/auth/intern/signup'),createIntern)
 router.get('/',authentication,authorizePermission('read_intern'),getAllInterns)
-router.put('/:id', schemaValidator('/auth/intern/update'), updateIntern);
+router.put('/:id', schemaValidator('/auth/intern/update'),authentication, updateIntern);
 router.delete('/delete/:id', deleteIntern);
 
 export default router

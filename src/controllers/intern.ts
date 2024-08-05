@@ -5,9 +5,11 @@ import { QueryFailedError, Repository } from "typeorm";
 import { encrypt } from "../helpers/helpers";
 import { Role } from "../entity/role";
 import { UserRole } from "../entity/userrole";
+import { CreateInternDto } from "../dtos/createIntern.dto";
 
 interface customRequest extends Request{
-    internRepository?:Repository<Intern>
+    internRepository?:Repository<Intern>;
+    user?:CreateInternDto;
 }
 export const createIntern=async(req:customRequest,res:Response)=>{
     console.log('req.body is',req.body)
@@ -42,6 +44,7 @@ export const createIntern=async(req:customRequest,res:Response)=>{
         
 
         const role=await roleRepository.findOne({where:{name:`${intern.userType}`}})
+        console.log('Role is ',role)
         if(!role){
          return res.status(500).json({message:'No roles match the provided role'})
         }
@@ -98,6 +101,7 @@ export const getAllInterns=async(req:customRequest,res:Response)=>{
 
 export const updateIntern = async (req: customRequest, res: Response) => {
     const { id } = req.params;
+    console.log('Requester user id is',req.user?.id)
     console.log('req for update is',req.body)
     const {
         firstName,
@@ -116,6 +120,7 @@ export const updateIntern = async (req: customRequest, res: Response) => {
 
     try {
         const internRepository=req.internRepository as Repository<Intern>
+        
 
         const intern = await internRepository.findOneBy({ id: parseInt(id, 10) });
         console.log('intern found to be updated is',intern)
@@ -123,6 +128,11 @@ export const updateIntern = async (req: customRequest, res: Response) => {
             return res.status(404).json({ error: 'Intern not found' });
         }
         console.log('before update intern.firstName is ',intern.firstName)
+
+        if(req.user?.userType!='admin' && req.user?.id!==intern.id){
+
+            return res.status(403).json({message:'Forbidden'})
+        }
 
         intern.firstName = firstName || intern.firstName;
         intern.lastName = lastName || intern.lastName;
@@ -134,14 +144,14 @@ export const updateIntern = async (req: customRequest, res: Response) => {
         intern.major = major || intern.major;  
         intern.dateOfBirth = dateOfBirth || intern.dateOfBirth;
         intern.gender = gender || intern.gender;
-        intern.password = password || intern.password;
-        console.log('after update intern.firstName is ',intern.firstName)
+        if(password){
+            intern.password=await encrypt.encryptpass(password)
+        }
 
 
 
         await internRepository.save(intern);
-        console.log(intern)
-        return res.status(200).json(intern);
+        return res.status(200).json({message:'Update successful',intern});
     } catch (error) {
         return res.status(500).json({ error: 'Error updating intern' });
     }

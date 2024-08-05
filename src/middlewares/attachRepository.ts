@@ -8,5 +8,6 @@ interface customRequest extends Request{
 
 export const attachRepositoryMiddleware = (req: customRequest, res: Response, next: NextFunction) => {
     req.internRepository = AppDataSource.getRepository(Intern);
+    console.log(req.internRepository)
     next();
 };

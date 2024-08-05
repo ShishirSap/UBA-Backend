@@ -1,16 +1,17 @@
+import 'reflect-metadata'
 import { Entity, PrimaryColumn, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 import { Role } from './role';
 import { Permission } from './permission';
 
 @Entity('role_permissions')
 export class RolePermission {
-    @PrimaryColumn()
+    @PrimaryColumn({type:'bigint'})
     role_id: bigint;
 
-    @PrimaryColumn()
+    @PrimaryColumn({type:'bigint'})
     permission_id: bigint;
 
-    @CreateDateColumn({ type: 'timestamp' })
+    @CreateDateColumn()
     granted_at: Date;
 
     @ManyToOne(() => Role, role => role.rolePermissions, { onDelete: 'CASCADE' })
