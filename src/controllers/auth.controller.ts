@@ -19,7 +19,7 @@ export class AuthController{
             if(!intern){
                 return res.status(404).json({message:'No intern with provided email found'})
             }
-            const isPasswordValid=encrypt.comparepassword(intern.password,password)
+            const isPasswordValid=encrypt.comparepassword(password,intern.password)
             if(!isPasswordValid){
                 return res.status(404).json({message:'Password is wrong'})
             }

@@ -40,8 +40,16 @@ export class Intern extends BaseEntity {
     @Column({type:'text',default:'intern'})
     userType:'mentor'|'admin'|'intern'
 
-    // @Column({ type: 'enum', enum: ['M', 'F', 'Other'], nullable: true })
-    // gender: 'M' | 'F' | 'Other';
+    @Column({default:false})
+    isVerified:boolean
+    
+    @Column({type:'varchar',length:255,nullable:true})
+    verificationToken:string|null
+
+    @Column({type:'timestamp',nullable:true})
+    tokenExpiry:Date|null
+
+
 
     @Column('text')
     gender:'M'|'F'|'Other'

@@ -6,7 +6,9 @@ import { encrypt } from "../helpers/helpers";
 import { Role } from "../entity/role";
 import { UserRole } from "../entity/userrole";
 import { CreateInternDto } from "../dtos/createIntern.dto";
-
+import { sendInviteEmail } from "../helpers/emailService";
+import { generateVerificationToken } from "../helpers/verificationtoken";
+import bcrypt from 'bcrypt'
 interface customRequest extends Request{
     internRepository?:Repository<Intern>;
     user?:CreateInternDto;
@@ -35,6 +37,16 @@ export const createIntern=async(req:customRequest,res:Response)=>{
         intern.dateOfBirth = dateOfBirth;
         intern.gender = gender;
         intern.userType=userType
+
+
+        const emailToken=generateVerificationToken()
+        intern.verificationToken=await bcrypt.hashSync(emailToken,12)
+        intern.tokenExpiry=new Date(Date.now()+2*60*1000)
+
+
+        console.log('Token expiry is',intern.tokenExpiry)
+
+
        
         await internRepository.save(intern)
       
@@ -42,7 +54,6 @@ export const createIntern=async(req:customRequest,res:Response)=>{
         
         const token=encrypt.generateToken({id:intern.id,firstName:firstName,lastName:lastName,email:intern.email,userType:intern.userType})
         
-
         const role=await roleRepository.findOne({where:{name:`${intern.userType}`}})
         console.log('Role is ',role)
         if(!role){
@@ -52,11 +63,12 @@ export const createIntern=async(req:customRequest,res:Response)=>{
         userRole.intern=intern
         userRole.roles=role
         await userRoleRepository.save(userRole)
+        await sendInviteEmail({recipientEmail:intern.email,inviteToken:emailToken})
  
         
         
 
-        return res.status(201).json({message:"user created successfully",intern,userRole,token})
+        return res.status(201).json({message:"user created successfully",intern,userRole,token,emailToken})
 
 
     }
@@ -152,10 +164,47 @@ export const updateIntern = async (req: customRequest, res: Response) => {
 
         await internRepository.save(intern);
         return res.status(200).json({message:'Update successful',intern});
-    } catch (error) {
-        return res.status(500).json({ error: 'Error updating intern' });
+    }   catch(err:unknown){
+        if(err instanceof QueryFailedError){
+            const sqlError=err.driverError;
+            if(sqlError.code==='ER_DUP_ENTRY'){
+                return res.status(400).json({error:'Email already exists'})
+
+            }
+            return res.status(500).json({error:'An error occured while creating intern'})
+        }
+
+        else if(err instanceof Error){
+            console.error('Error:',err.message)
+            return res.status(500).json({error:'An unexpected error occured'})
+
+        }
+        else{
+            console.error('Unknown error:',err)
+            return res.status(500).json({error:'An unexpected error occured'})
+        }
+      
     }
 };
+
+export const getInternById=async(req:customRequest,res:Response)=>{
+    console.log('Req.params is ',req.params)
+    const {id}=req.params
+
+    try{
+        const internRepository=req.internRepository as Repository<Intern>
+        const intern =await internRepository.findOneBy({id:parseInt(id,10)})
+        if(!intern){
+            return res.status(404).json({error:'Intern not found'})
+           
+        }
+        return res.status(200).json(intern)
+    }
+    catch(error){
+        console.error('Error fetching intern by id',error)
+        return res.status(500).json({error:'Error fetching intern'})
+    }
+}
 
 export const deleteIntern = async (req: customRequest, res: Response) => {
     const { id } = req.params;
