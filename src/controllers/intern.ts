@@ -68,7 +68,7 @@ export const createIntern=async(req:customRequest,res:Response)=>{
         
         
 
-        return res.status(201).json({message:"user created successfully",intern,userRole,token,emailToken})
+        return res.status(201).json({message:"user created successfully",intern,userRole,emailToken})
 
 
     }
@@ -187,6 +187,7 @@ export const updateIntern = async (req: customRequest, res: Response) => {
     }
 };
 
+
 export const getInternById=async(req:customRequest,res:Response)=>{
     console.log('Req.params is ',req.params)
     const {id}=req.params
@@ -206,7 +207,55 @@ export const getInternById=async(req:customRequest,res:Response)=>{
     }
 }
 
+// export const getInternById = async (req: Request, res: Response) => {
+//     console.log('Req.params is ', req.params);
+//     const { id } = req.params;
+
+//     try {
+//         const internRepository: Repository<Intern> = AppDataSource.getRepository(Intern);
+
+//         // Fetch intern by ID along with roles and permissions
+//         const intern = await internRepository.findOne({
+//             where: { id: parseInt(id, 10) },
+//             relations: ['userRoles', 'userRoles.roles', 'userRoles.roles.rolePermissions', 'userRoles.roles.rolePermissions.permission'],
+//         });
+
+//         if (!intern) {
+//             return res.status(404).json({ error: 'Intern not found' });
+//         }
+
+//         // Extract roles and permissions
+//         const roles = intern.userRoles.map(userRole => userRole.roles.name);
+//         const permissions = intern.userRoles.reduce((acc, userRole) => {
+//             return acc.concat(userRole.roles.rolePermissions.map(rp => rp.permission.name));
+//         }, [] as string[]);
+
+//         return res.status(200).json({
+//             intern: {
+//                 id: intern.id,
+//                 firstName: intern.firstName,
+//                 lastName: intern.lastName,
+//                 email: intern.email,
+//                 phoneNumber: intern.phoneNumber,
+//                 address: intern.address,
+//                 university: intern.university,
+//                 degree: intern.degree,
+//                 major: intern.major,
+//                 dateOfBirth: intern.dateOfBirth,
+//                 gender: intern.gender,
+//                 userType: intern.userType,
+//                 roles,
+//                 permissions
+//             }
+//         });
+//     } catch (error) {
+//         console.error('Error fetching intern by id', error);
+//         return res.status(500).json({ error: 'Error fetching intern' });
+//     }
+// };
+
 export const deleteIntern = async (req: customRequest, res: Response) => {
+    console.log('delete is hit')
     const { id } = req.params;
 
     try {

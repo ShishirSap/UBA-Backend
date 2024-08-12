@@ -3,6 +3,7 @@ import express, { NextFunction } from 'express'
 import { Request,Response } from 'express'
 import userRouter from './routes/users'
 import internRouter from './routes/intern'
+import rolesRouter from './routes/role'
 import { ApolloServer } from '@apollo/server'
 import {expressMiddleware} from '@apollo/server/express4'
 import cors from 'cors'
@@ -50,6 +51,8 @@ const PORT=process.env.PORT
 
 app.use('/api/users',userRouter)
 app.use('/api/intern',internRouter)
+app.use('/api/roles',rolesRouter)
+
 
 app.get('/',(req:Request,res:Response,next:NextFunction)=>{
     res.send('hello world')
