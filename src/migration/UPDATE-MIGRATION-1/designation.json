@@ -1,6 +1,6 @@
 {
     "depends_upon": null,
-    "script": "ALTER TABLE designation DROP COLUMN requirements;",
+    "script": "ALTER TABLE intern ADD COLUMN isVerified BOOLEAN NOT NULL DEFAULT FALSE,ADD COLUMN verificationToken VARCHAR(255) NULL,ADD COLUMN tokenExpiry DATETIME NULL;",
     "type": "UPDATE",
     "id": "update-migration-1"
 }

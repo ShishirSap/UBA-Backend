@@ -47,18 +47,18 @@ const PASSWORD_REGEX = new RegExp(
 });
 
 const updateInternSchema = Joi.object({
-  firstName: Joi.string().optional(),
-  lastName: Joi.string().optional(),
-  email: Joi.string().email().optional(),
-  phoneNumber: Joi.string().optional(),
-  address: Joi.string().optional(),
-  university: Joi.string().optional(),
-  degree: Joi.string().optional(),
-  major: Joi.string().optional(),
-  dateOfBirth: Joi.date().optional(),
-  userType:Joi.string().optional(),
-  gender: Joi.string().valid('M', 'F', 'Other').optional(),
-  password:Joi.string().pattern(PASSWORD_REGEX).min(8).optional()
+  firstName: Joi.string().optional().allow(''),
+  lastName: Joi.string().optional().allow(''),
+  email: Joi.string().email().optional().allow(''),
+  phoneNumber: Joi.string().optional().allow(''),
+  address: Joi.string().optional().allow(''),
+  university: Joi.string().optional().allow(''),
+  degree: Joi.string().optional().allow(''),
+  major: Joi.string().optional().allow(''),
+  dateOfBirth: Joi.date().optional().allow(''),
+  userType: Joi.string().optional().allow(''),
+  gender: Joi.string().valid('M', 'F', 'Other').optional().allow(''),
+  password: Joi.string().pattern(PASSWORD_REGEX).min(8).optional().allow('')
 });
 
   export default{

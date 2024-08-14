@@ -4,13 +4,13 @@ import { Role } from './role';
 
 @Entity({name:'user_roles'})
 export class UserRole {
-    @PrimaryColumn()
+    @PrimaryColumn('int')
     intern_id: number;
 
-    @PrimaryColumn()
+    @PrimaryColumn('bigint')
     role_id: bigint;
 
-    @CreateDateColumn({ type: 'timestamp' })
+    @CreateDateColumn()
     assigned_at: Date;
 
     @ManyToOne(() => Intern, intern => intern.userRoles, { onDelete: 'CASCADE' })
