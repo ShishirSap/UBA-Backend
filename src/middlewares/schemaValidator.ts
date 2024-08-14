@@ -42,6 +42,7 @@ interface ValidationError {
       }
   
       const { error, value } = schema.validate(req.body, validationOptions);
+      console.log('middleware error is',error)
   
       if (error) {
         const customError: CustomError = {

@@ -13,10 +13,10 @@ export class Role {
     @Column({ type: 'varchar', length: 255, nullable: true })
     description: string;
 
-    @CreateDateColumn({ type: 'timestamp' })
+    @CreateDateColumn()
     created_at: Date;
 
-    @UpdateDateColumn({ type: 'timestamp' })
+    @UpdateDateColumn()
     updated_at: Date;
 
     @OneToMany(() => UserRole, userRole => userRole.roles)
