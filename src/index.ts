@@ -15,6 +15,8 @@ import { internResolvers } from "./graphql/interns/resolvers";
 import { usertypeDefs } from "./graphql/users/schema";
 import { userResolvers } from "./graphql/users/resolvers";
 import { mergeResolvers, mergeType, mergeTypeDefs } from "@graphql-tools/merge";
+import { Client } from "@elastic/elasticsearch";
+const client = new Client({ node: "http:localhost:9200" });
 
 const app = express();
 
