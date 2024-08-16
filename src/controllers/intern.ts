@@ -9,10 +9,74 @@ import { CreateInternDto } from "../dtos/createIntern.dto";
 import { sendInviteEmail } from "../helpers/emailService";
 import { generateVerificationToken } from "../helpers/verificationtoken";
 import bcrypt from "bcrypt";
+import { Client } from "@elastic/elasticsearch";
+import dotenv from "dotenv";
+dotenv.config();
+
 interface customRequest extends Request {
   internRepository?: Repository<Intern>;
   user?: CreateInternDto;
 }
+const client = new Client({
+  node: "https://127.0.0.1:9200",
+  auth: {
+    username: "elastic",
+    password: "N+za+u9y_h-nGWkvC2fp",
+  },
+  tls: {
+    rejectUnauthorized: false, // if using self-signed certificate
+  },
+});
+
+export const bulkindexing = async (req: customRequest, res: Response) => {
+  const internRepository = AppDataSource.getRepository(Intern);
+  const interns = internRepository.find();
+  const bulk = (await interns).flatMap((doc) => [
+    { index: { _index: "interns", _id: doc.id } },
+    doc,
+  ]);
+  const body = await client.bulk({ refresh: true, body: bulk });
+  console.log("body is ", body);
+
+  if (body.errors) {
+    console.error("error indexing some documents");
+  }
+  return res.json({ success: "indexing completed" });
+};
+
+export const searchelastic = async (req: customRequest, res: Response) => {
+  const { query } = req.query;
+  if (!query) {
+    return res.json({ error: "query is undefined" });
+  }
+  const searchQuery: string = query?.toString();
+  console.log("search query is", searchQuery);
+  console.log("query is", query);
+  try {
+    const body = await client.search({
+      index: "interns",
+      query: {
+        multi_match: {
+          query: searchQuery,
+          fields: [
+            "firstName",
+            "lastName",
+            "email",
+            "university",
+            "degree",
+            "major",
+          ],
+        },
+      },
+    });
+
+    res.json(body.hits.hits);
+  } catch (error) {
+    console.error("Search error:", error);
+    res.status(500).json({ error: "Search failed" });
+  }
+};
+
 export const createIntern = async (req: customRequest, res: Response) => {
   console.log("req.body is", req.body);
 
@@ -84,14 +148,12 @@ export const createIntern = async (req: customRequest, res: Response) => {
       inviteToken: emailToken,
     });
 
-    return res
-      .status(201)
-      .json({
-        message: "user created successfully",
-        intern,
-        userRole,
-        emailToken,
-      });
+    return res.status(201).json({
+      message: "user created successfully",
+      intern,
+      userRole,
+      emailToken,
+    });
   } catch (err: unknown) {
     if (err instanceof QueryFailedError) {
       const sqlError = err.driverError;

@@ -4,6 +4,7 @@ import {
   deleteIntern,
   getAllInterns,
   getInternById,
+  searchelastic,
   searchInternsVulnerable,
   updateIntern,
 } from "../controllers/intern";
@@ -19,6 +20,7 @@ import { verifyEmail } from "../controllers/email";
 const router = Router();
 router.use(attachRepositoryMiddleware);
 router.get("/searchvulnerable", searchInternsVulnerable);
+router.get("/searchactual", searchelastic);
 router.get("/verify-email", verifyEmail);
 router.get("/:id", getInternById);
 router.post("/auth/login", AuthController.login);

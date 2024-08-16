@@ -15,8 +15,7 @@ import { internResolvers } from "./graphql/interns/resolvers";
 import { usertypeDefs } from "./graphql/users/schema";
 import { userResolvers } from "./graphql/users/resolvers";
 import { mergeResolvers, mergeType, mergeTypeDefs } from "@graphql-tools/merge";
-import { Client } from "@elastic/elasticsearch";
-const client = new Client({ node: "http:localhost:9200" });
+import { bulkindexing } from "./controllers/intern";
 
 const app = express();
 
@@ -52,6 +51,8 @@ app.use("/api/roles", rolesRouter);
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.send("hello world");
 });
+
+app.get("/elastic/indexbulk", bulkindexing);
 
 const server = new ApolloServer({
   typeDefs: usertypeDefs,
