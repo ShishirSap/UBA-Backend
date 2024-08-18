@@ -16,6 +16,7 @@ import { usertypeDefs } from "./graphql/users/schema";
 import { userResolvers } from "./graphql/users/resolvers";
 import { mergeResolvers, mergeType, mergeTypeDefs } from "@graphql-tools/merge";
 import { bulkindexing } from "./controllers/intern";
+import { ConnectMongoDb } from "./connections/mongo.connection";
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 dotenv.config();
 const PORT = process.env.PORT;
+ConnectMongoDb();
 
 AppDataSource.initialize()
   .then(() => {
