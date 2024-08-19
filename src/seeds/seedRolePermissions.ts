@@ -6,7 +6,7 @@ interface RolePermissionMapping {
 }
 
 async function seedRolePermissions() {
-  await mongoose.connect("mongodb://localhost:27017/yourdb");
+  await mongoose.connect("mongodb://localhost:27017/authorization");
 
   // Fetch all roles and permissions
   const roles = await mRole.find();
@@ -18,7 +18,7 @@ async function seedRolePermissions() {
     if (role.name === "intern") {
       rolePermissionMappings.push({
         roleId: role._id as mongoose.Types.ObjectId,
-        permissionId: permissions.find((p) => p.name === "read_intern")
+        permissionId: permissions.find((p) => p.name === "create_intern")
           ?._id as mongoose.Types.ObjectId,
       });
     } else if (role.name === "mentor") {

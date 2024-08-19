@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { mPermission } from "../models/mongoschema";
 
 async function seedPermissions() {
-  await mongoose.connect("mongodb://localhost:27017/yourdb");
+  await mongoose.connect("mongodb://localhost:27017/authorization");
 
   const permissions = [
     { name: "read_intern", description: "Permission to read intern details" },
