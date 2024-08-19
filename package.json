@@ -8,6 +8,9 @@
     "dev": "nodemon ./src/index.ts",
     "test": "jest",
     "coverage": "jest --coverage",
+    "seedRoles": "ts-node ./src/seeds/seedRole.ts",
+    "seedPermissions": "ts-node ./src/seeds/seedPermissions.ts",
+    "seedRolePermissions": "ts-node ./src/seeds/seedRolePermissions.ts",
     "migrate:install": "ts-node src/scripts/migrate.ts INSTALL",
     "migrate:update": "ts-node src/scripts/migrate.ts UPDATE",
     "prepare": "husky"

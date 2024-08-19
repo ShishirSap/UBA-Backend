@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-interface IRole extends Document {
+export interface IRole extends Document {
   name: string;
   description?: string;
   createdAt: Date;
@@ -14,7 +14,7 @@ const RoleSchema: Schema = new Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-const Role = mongoose.model<IRole>("Role", RoleSchema);
+const mRole = mongoose.model<IRole>("Role", RoleSchema);
 
 //Permission Schema
 interface IPermission extends Document {
@@ -31,7 +31,7 @@ const PermissionSchema: Schema = new Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-const Permission = mongoose.model<IPermission>("Permission", PermissionSchema);
+const mPermission = mongoose.model<IPermission>("Permission", PermissionSchema);
 
 // RolePermission Schema
 interface IRolePermission extends Document {
@@ -50,7 +50,7 @@ const RolePermissionSchema: Schema = new Schema({
   grantedAt: { type: Date, default: Date.now },
 });
 
-const RolePermission = mongoose.model<IRolePermission>(
+const mRolePermission = mongoose.model<IRolePermission>(
   "RolePermission",
   RolePermissionSchema,
 );
@@ -68,6 +68,6 @@ const UserRoleSchema: Schema = new Schema({
   assignedAt: { type: Date, default: Date.now },
 });
 
-const UserRole = mongoose.model<IUserRole>("UserRole", UserRoleSchema);
+const mUserRole = mongoose.model<IUserRole>("UserRole", UserRoleSchema);
 
-export { Role, Permission, RolePermission, UserRole };
+export { mRole, mPermission, mRolePermission, mUserRole };

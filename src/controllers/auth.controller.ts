@@ -43,7 +43,6 @@ export class AuthController {
         firstName: intern.firstName,
         lastName: intern.lastName,
         email: intern.email,
-        userType: intern.userType,
       });
       const roles = intern.userRoles.map((userRole) => userRole.roles.name);
       const permissions = intern.userRoles.reduce((acc, userRole) => {
@@ -58,7 +57,6 @@ export class AuthController {
           firstName: intern.firstName,
           lastName: intern.lastName,
           email: intern.email,
-          userType: intern.userType,
           roles,
           permissions,
         },

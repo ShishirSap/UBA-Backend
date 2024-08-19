@@ -11,6 +11,7 @@ import { generateVerificationToken } from "../helpers/verificationtoken";
 import bcrypt from "bcrypt";
 import { Client } from "@elastic/elasticsearch";
 import dotenv from "dotenv";
+import { IRole, mRole, mUserRole } from "../models/mongoschema";
 dotenv.config();
 
 interface customRequest extends Request {
@@ -95,7 +96,6 @@ export const createIntern = async (req: customRequest, res: Response) => {
     password,
     dateOfBirth,
     gender,
-    userType,
   } = req.body;
   const encryptedPassword = await encrypt.encryptpass(password);
 
@@ -112,7 +112,6 @@ export const createIntern = async (req: customRequest, res: Response) => {
     intern.major = major;
     intern.dateOfBirth = dateOfBirth;
     intern.gender = gender;
-    intern.userType = userType;
 
     const emailToken = generateVerificationToken();
     intern.verificationToken = await bcrypt.hashSync(emailToken, 12);
@@ -127,22 +126,8 @@ export const createIntern = async (req: customRequest, res: Response) => {
       firstName: firstName,
       lastName: lastName,
       email: intern.email,
-      userType: intern.userType,
     });
 
-    const role = await roleRepository.findOne({
-      where: { name: `${intern.userType}` },
-    });
-    console.log("Role is ", role);
-    if (!role) {
-      return res
-        .status(500)
-        .json({ message: "No roles match the provided role" });
-    }
-    const userRole = new UserRole();
-    userRole.intern = intern;
-    userRole.roles = role;
-    await userRoleRepository.save(userRole);
     await sendInviteEmail({
       recipientEmail: intern.email,
       inviteToken: emailToken,
@@ -151,7 +136,6 @@ export const createIntern = async (req: customRequest, res: Response) => {
     return res.status(201).json({
       message: "user created successfully",
       intern,
-      userRole,
       emailToken,
     });
   } catch (err: unknown) {
@@ -210,9 +194,23 @@ export const updateIntern = async (req: customRequest, res: Response) => {
     if (!intern) {
       return res.status(404).json({ error: "Intern not found" });
     }
-    console.log("before update intern.firstName is ", intern.firstName);
 
-    if (req.user?.userType != "admin" && req.user?.id !== intern.id) {
+    const userRole = await mUserRole
+      .findOne({ userId: req.user?.id })
+      .populate("roleId");
+    if (!userRole) {
+      return res
+        .status(403)
+        .json({ message: "Forbidden:User has no roles assigned" });
+    }
+    const adminRole: IRole | null = await mRole.findOne({ name: "admin" });
+    if (!adminRole) {
+      return res.status(500).json({ message: "Admin role not found" });
+    }
+    if (
+      userRole.roleId.toString() !== adminRole.id.toString() &&
+      req.user?.id !== intern.id
+    ) {
       return res.status(403).json({ message: "Forbidden" });
     }
 
