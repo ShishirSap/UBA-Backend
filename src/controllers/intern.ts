@@ -195,13 +195,12 @@ export const updateIntern = async (req: customRequest, res: Response) => {
       return res.status(404).json({ error: "Intern not found" });
     }
 
-    const userRole = await mUserRole
-      .findOne({ userId: req.user?.id })
-      .populate("roleId");
+    const userRole = await mUserRole.findOne({ internId: req.user?.id });
+
     if (!userRole) {
       return res
         .status(403)
-        .json({ message: "Forbidden:User has no roles assigned" });
+        .json({ message: "You donot have permission to edit this profile" });
     }
     const adminRole: IRole | null = await mRole.findOne({ name: "admin" });
     if (!adminRole) {
