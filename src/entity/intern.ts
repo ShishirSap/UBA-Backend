@@ -51,7 +51,7 @@ export class Intern extends BaseEntity {
   @Column({ type: "timestamp", nullable: true })
   tokenExpiry: Date | null;
 
-  @Column("text")
+  @Column({ type: "text", nullable: true })
   gender: "M" | "F" | "Other";
 
   @OneToMany(() => internship, (internship) => internship.intern)

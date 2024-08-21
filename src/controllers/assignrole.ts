@@ -13,6 +13,7 @@ interface customRequest extends Request {
 export const addRole = async (req: customRequest, res: Response) => {
   const { name, description } = req.body;
   const { userId } = req.params;
+  console.log("name desc and req.user is", name, userId);
   try {
     const internRepository = AppDataSource.getRepository(Intern);
     const intern = await internRepository.findOne({

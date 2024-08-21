@@ -37,6 +37,7 @@
     "express": "^4.19.2",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
+    "mongodb-memory-server": "^10.0.0",
     "mongoose": "^8.5.3",
     "mysql2": "^3.10.2",
     "nodemailer": "^6.9.14",
@@ -66,7 +67,7 @@
     "nodemon": "^3.1.4",
     "prettier": "3.3.3",
     "supertest": "^7.0.0",
-    "ts-jest": "^29.1.5",
+    "ts-jest": "^29.2.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   }

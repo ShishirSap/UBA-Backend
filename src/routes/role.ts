@@ -10,7 +10,7 @@ const router = Router();
 
 // Create a new role
 router.post("/", RoleController.createRole);
-router.post("/assign-role/:userId", authentication, addRole);
+router.post("/assign-role/:userId", addRole);
 
 // Get all roles
 router.get("/", RoleController.getAllRoles);

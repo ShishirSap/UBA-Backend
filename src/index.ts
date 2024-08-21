@@ -38,13 +38,13 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 dotenv.config();
 const PORT = process.env.PORT;
-ConnectMongoDb();
+// ConnectMongoDb();
 
-AppDataSource.initialize()
-  .then(() => {
-    console.log("Database connection successfull");
-  })
-  .catch((error) => console.log(error));
+// AppDataSource.initialize()
+//   .then(() => {
+//     console.log("Database connection successfull");
+//   })
+//   .catch((error) => console.log(error));
 
 app.use("/api/users", userRouter);
 app.use("/api/intern", internRouter);
