@@ -12,7 +12,8 @@ import mongoose from "mongoose";
 import { Intern } from "../../entity/intern";
 import { mRole } from "../../models/mongoschema";
 import { app } from "../..";
-
+import { sendInviteEmail } from "../../helpers/emailService";
+jest.mock("../../helpers/emailService");
 let mongoServer: MongoMemoryServer;
 let testHelper: TestHelper;
 let internRepository: any;
@@ -59,6 +60,58 @@ describe("role assignment", () => {
     expect(response.body.message).toBe("Role assigned successfully");
     expect(response.body.intern.id).toBe(intern.id);
     expect(response.body.userRole).toBeDefined();
+  });
+});
+
+describe("create intern api", () => {
+  it("should create a new intern", async () => {
+    const internData = {
+      firstName: "John",
+      lastName: "Doe",
+      email: "john.doe@example.com",
+      phoneNumber: "1234567890",
+      address: "123 Main St",
+      university: "XYZ University",
+      degree: "Bachelors",
+      major: "Computer Science",
+      password: "Password123!",
+      dateOfBirth: "1990-01-01",
+      gender: "M",
+    };
+    const response = await request(app)
+      .post("/api/intern")
+      .send(internData)
+      .expect(201);
+    expect(response.body.message).toBe("user created successfully");
+    expect(response.body.intern.email).toBe(internData.email);
+
+    expect(sendInviteEmail).toHaveBeenCalledWith({
+      recipientEmail: internData.email,
+      inviteToken: expect.any(String),
+    });
+  });
+
+  it("should return 400 if email already exists", async () => {
+    const internData = {
+      firstName: "Jane",
+      lastName: "Doe",
+      email: "john.doe@example.com", // Same email as the first test case
+      phoneNumber: "1234567891",
+      address: "456 Another St",
+      university: "XYZ University",
+      degree: "Masters",
+      major: "Information Technology",
+      password: "Password123!",
+      dateOfBirth: "1992-02-02",
+      gender: "F",
+    };
+
+    const response = await request(app)
+      .post("/api/intern")
+      .send(internData)
+      .expect(400);
+
+    expect(response.body.error).toBe("Email already exists");
   });
 });
 
