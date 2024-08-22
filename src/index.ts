@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import userRouter from "./routes/users";
 import internRouter from "./routes/intern";
 import rolesRouter from "./routes/role";
+import permissionsRouter from "./routes/permissions";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import cors from "cors";
@@ -17,9 +18,11 @@ import { userResolvers } from "./graphql/users/resolvers";
 import { mergeResolvers, mergeType, mergeTypeDefs } from "@graphql-tools/merge";
 import { bulkindexing } from "./controllers/intern";
 import { ConnectMongoDb } from "./connections/mongo.connection";
+import { createClient } from "redis";
 
 const app = express();
 
+// connectRedis()
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(bodyParser.json());
@@ -49,6 +52,7 @@ AppDataSource.initialize()
 app.use("/api/users", userRouter);
 app.use("/api/intern", internRouter);
 app.use("/api/roles", rolesRouter);
+app.use("/api/permissions", permissionsRouter);
 
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.send("hello world");

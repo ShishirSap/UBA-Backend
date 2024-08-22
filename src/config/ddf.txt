@@ -1,0 +1,6 @@
+So  I changed my graphql resolver to  implement 
+listing and searching using elastic search.I also
+ setup separate inmemory mongo server for testing 
+ mongodb related queries.Today I plan to complete
+  redis caching.I dont think it will take long.I
+   also need to modify my react code thank you

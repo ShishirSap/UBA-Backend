@@ -16,9 +16,9 @@ router.post("/assign-role/:userId", addRole);
 router.get("/", RoleController.getAllRoles);
 
 // Get a role by ID
-router.get("/:id", RoleController.getRoleById);
+// router.get("/:id", RoleController.getRoleById);
 
-// Delete a role by ID
-router.delete("/:id", RoleController.deleteRole);
+// // Delete a role by ID
+// router.delete("/:id", RoleController.deleteRole);
 
 export default router;
