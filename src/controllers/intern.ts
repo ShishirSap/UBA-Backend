@@ -29,7 +29,7 @@ const client = new Client({
   },
 });
 
-export const bulkindexing = async (req: customRequest, res: Response) => {
+export const bulkindexing = async () => {
   const internRepository = AppDataSource.getRepository(Intern);
   const interns = internRepository.find();
   const bulk = (await interns).flatMap((doc) => [
@@ -37,46 +37,40 @@ export const bulkindexing = async (req: customRequest, res: Response) => {
     doc,
   ]);
   const body = await client.bulk({ refresh: true, body: bulk });
-  console.log("body is ", body);
-
-  if (body.errors) {
-    console.error("error indexing some documents");
-  }
-  return res.json({ success: "indexing completed" });
 };
 
-export const searchelastic = async (req: customRequest, res: Response) => {
-  const { query } = req.query;
-  if (!query) {
-    return res.json({ error: "query is undefined" });
-  }
-  const searchQuery: string = query?.toString();
-  console.log("search query is", searchQuery);
-  console.log("query is", query);
-  try {
-    const body = await client.search({
-      index: "interns",
-      query: {
-        multi_match: {
-          query: searchQuery,
-          fields: [
-            "firstName",
-            "lastName",
-            "email",
-            "university",
-            "degree",
-            "major",
-          ],
-        },
-      },
-    });
+// export const searchelastic = async (req: customRequest, res: Response) => {
+//   const { query } = req.query;
+//   if (!query) {
+//     return res.json({ error: "query is undefined" });
+//   }
+//   const searchQuery: string = query?.toString();
+//   console.log("search query is", searchQuery);
+//   console.log("query is", query);
+//   try {
+//     const body = await client.search({
+//       index: "interns",
+//       query: {
+//         multi_match: {
+//           query: searchQuery,
+//           fields: [
+//             "firstName",
+//             "lastName",
+//             "email",
+//             "university",
+//             "degree",
+//             "major",
+//           ],
+//         },
+//       },
+//     });
 
-    res.json(body.hits.hits);
-  } catch (error) {
-    console.error("Search error:", error);
-    res.status(500).json({ error: "Search failed" });
-  }
-};
+//     res.json(body.hits.hits);
+//   } catch (error) {
+//     console.error("Search error:", error);
+//     res.status(500).json({ error: "Search failed" });
+//   }
+// };
 
 export const createIntern = async (req: customRequest, res: Response) => {
   console.log("req.body is", req.body);
@@ -119,6 +113,7 @@ export const createIntern = async (req: customRequest, res: Response) => {
     console.log("Token expiry is", intern.tokenExpiry);
 
     await internRepository.save(intern);
+    await bulkindexing();
 
     const token = encrypt.generateToken({
       id: intern.id,
@@ -161,6 +156,8 @@ export const getAllInterns = async (req: customRequest, res: Response) => {
   try {
     const internRepository = req.internRepository as Repository<Intern>;
     const interns = await internRepository.find({});
+    bulkindexing();
+    console.log("total number of interns are", interns.length);
     return res.status(200).json(interns);
   } catch (error) {
     return res.status(500).json({ error: "Error fetching interns" });
@@ -227,6 +224,8 @@ export const updateIntern = async (req: customRequest, res: Response) => {
     }
 
     await internRepository.save(intern);
+    await bulkindexing();
+
     return res.status(200).json({ message: "Update successful", intern });
   } catch (err: unknown) {
     if (err instanceof QueryFailedError) {
@@ -271,14 +270,32 @@ export const deleteIntern = async (req: customRequest, res: Response) => {
   try {
     const internRepository = req.internRepository as Repository<Intern>;
 
+    // Step 1: Check if the intern exists in MySQL
     const intern = await internRepository.findOneBy({ id: parseInt(id, 10) });
     if (!intern) {
       return res.status(404).json({ error: "Intern not found" });
     }
 
+    // Step 2: Delete the document from Elasticsearch
+    const esResponse = await client.delete({
+      index: "interns",
+      id: id.toString(),
+    });
+    console.log("esresponse is", esResponse);
+
+    if (esResponse.result !== "deleted") {
+      // If the deletion from Elasticsearch failed, return an error
+      return res
+        .status(500)
+        .json({ error: "Error deleting intern from Elasticsearch" });
+    }
+
+    // Step 3: Remove the intern from MySQL
     await internRepository.remove(intern);
+
     return res.status(200).json({ message: "Intern deleted successfully" });
   } catch (error) {
+    console.error("Error during deletion:", error);
     return res.status(500).json({ error: "Error deleting intern" });
   }
 };
@@ -295,6 +312,11 @@ export const searchInternsVulnerable = async (
     const internRepository = req.internRepository as Repository<Intern>;
     const intern = await internRepository.query(`
             SELECT * FROM intern WHERE EMAIL='${email}'`);
+
+    // const intern = await internRepository.query(
+    //   `SELECT * FROM intern WHERE EMAIL = ?`,
+    //   [email] // Parameterized input
+    // );
 
     if (intern.length === 0) {
       return res.status(404).json({ error: "Intern not found" });

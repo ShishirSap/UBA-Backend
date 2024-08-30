@@ -11,6 +11,8 @@ class RoleController {
 
       const newRole = new mRole({ name, description });
       await newRole.save();
+      const redisclient = await getRedisClient();
+      await redisclient.del("roles");
 
       // redisclient.del('roles')
       return res

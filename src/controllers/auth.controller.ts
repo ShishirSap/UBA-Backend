@@ -8,6 +8,7 @@ import {
   mRolePermission,
   mPermission,
 } from "../models/mongoschema"; // MongoDB models
+import { getRedisClient } from "../connections/redisConnection";
 
 export class AuthController {
   static async login(req: Request, res: Response) {
@@ -50,22 +51,36 @@ export class AuthController {
         return role.name;
       });
 
+      const redisclient = await getRedisClient();
+
       // Fetch permissions based on roles
       let permissions: string[] = [];
 
       for (const userRole of userRoles) {
         const roleId = userRole.roleId._id;
+        const cacheKey = `role:${roleId}:permissions`;
+        let cachedPermissions = await redisclient.get(cacheKey);
+        if (cachedPermissions) {
+          console.log("permissions from cache");
+          permissions.push(...JSON.parse(cachedPermissions));
+        } else {
+          // Fetch RolePermissions for each roleId
+          const rolePermissions = await mRolePermission
+            .find({ roleId })
+            .populate("permissionId");
 
-        // Fetch RolePermissions for each roleId
-        const rolePermissions = await mRolePermission
-          .find({ roleId })
-          .populate("permissionId");
-
-        // Extract the permission names and add to the permissions array
-        rolePermissions.forEach((rolePermission) => {
-          const permission = rolePermission.permissionId as any;
-          permissions.push(permission.name);
-        });
+          // Extract the permission names and add to the permissions array
+          const fetchedPermissions = rolePermissions.map((rolePermission) => {
+            const permission = rolePermission.permissionId as any;
+            return permission.name;
+          });
+          permissions.push(...fetchedPermissions);
+          await redisclient.setEx(
+            cacheKey,
+            3600,
+            JSON.stringify(fetchedPermissions),
+          );
+        }
       }
 
       // Generate JWT token

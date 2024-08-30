@@ -5,4 +5,5 @@ module.exports = {
   verbose: true,
   forceExit: false,
   setupFiles: ["./jest.setup.ts"],
+  collectCoverageFrom: ["src/**/*.{js,jsx,ts,tsx}"],
 };

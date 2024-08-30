@@ -11,7 +11,7 @@ interface customRequest extends Request {
 }
 
 export const addRole = async (req: customRequest, res: Response) => {
-  const { name, description } = req.body;
+  const { name } = req.body;
   const { userId } = req.params;
   console.log("name desc and req.user is", name, userId);
   try {

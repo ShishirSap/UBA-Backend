@@ -17,7 +17,7 @@ type Intern {
 }
 
 type PageInfo {
-  endCursor: Int
+  endCursor: [String]
   hasNextPage: Boolean!
 }
 
@@ -31,7 +31,7 @@ type Query {
     firstName: String
     lastName: String
     email: String
-    cursor: Int
+    cursor:[String]
     limit: Int
   ): InternConnection!
 }
